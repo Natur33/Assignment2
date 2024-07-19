@@ -23,23 +23,3 @@ public abstract class CryptoAsset {
                 '}';
     }
 }
-    /*// Properties
-    private String blockchainNetwork;
-
-    // Constructor
-    public CryptoAsset(String blockchainNetwork) {
-        this.blockchainNetwork = blockchainNetwork;
-    }
-
-    // Getters and setters
-    public String getBlockchainNetwork() {
-        return blockchainNetwork;
-    }
-
-    public void setBlockchainNetwork(String blockchainNetwork) {
-        this.blockchainNetwork = blockchainNetwork;
-    }
-
-    // Helper methods
-    // Add more helper methods as needed, e.g., toString()
-*/

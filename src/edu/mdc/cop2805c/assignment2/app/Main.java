@@ -54,18 +54,18 @@ public class Main {
     }
 
     private static void displayMenu() {
-        System.out.println("\n***********************************************************");
-        System.out.println("** Please choose your option: ");
-        System.out.println("** 1. View all Wallets");
-        System.out.println("** 2. View Wallet");
-        System.out.println("** 3. Add Wallet");
-        System.out.println("** 4. Buy Crypto Assets");
-        System.out.println("** 5. Sell Crypto Assets");
-        System.out.println("** 6. Transfer Crypto Assets");
-        System.out.println("** Q. Quit");
-        System.out.println("***********************************************************");
-        System.out.print("\nEnter your choice: ");
-    }
+    System.out.println("\n***********************************************************");
+    System.out.println("** Please choose your option: ");
+    System.out.println("** 1. View all Wallets");
+    System.out.println("** 2. View Wallet");
+    System.out.println("** 3. Add Wallet");
+    System.out.println("** 4. Buy Crypto Assets");
+    System.out.println("** 5. Sell Crypto Assets");
+    System.out.println("** 6. Transfer Crypto Assets");
+    System.out.println("** Q. Quit");
+    System.out.println("***********************************************************");
+    System.out.print("\nEnter your choice: ");
+}
 
     private static void viewAllWallets() {
         System.out.println(walletManager.getShortDescription());

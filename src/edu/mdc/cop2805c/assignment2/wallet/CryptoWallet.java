@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.mdc.cop2805c.assignment2.assets.CryptoCurrencyHolding;
+import edu.mdc.cop2805c.assignment2.assets.NFT;
 
 public class CryptoWallet<T> {
     private String niceName;
@@ -27,9 +28,9 @@ public class CryptoWallet<T> {
         holdings.remove(asset);
     }
 
-    public void transferTo(T asset, CryptoWallet<T> toWallet) {
-        if (holdings.remove(asset)) {
-            toWallet.buy(asset, this.address);
+    public void transferTo(CryptoWallet<CryptoCurrencyHolding> nftToTransfer, CryptoWallet<T> toWallet) {
+        if (holdings.remove(nftToTransfer)) {
+            toWallet.buy(nftToTransfer, this.address);
         }
     }
 
@@ -45,25 +46,81 @@ public class CryptoWallet<T> {
     }
 
     public String getShortDescription() {
-        return String.format("%s: $%.2f", niceName, getTotalValueInUSD());
-    }
-
-    public String getLongDescription() {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%s (Address: %s)\n", niceName, address));
-        sb.append(String.format("Total Value: $%.2f\n", getTotalValueInUSD()));
-        sb.append("Holdings:\n");
+        sb.append(" ***********************************\n");
+        sb.append(String.format(" * Wallet name: %s\n", niceName));
         for (T holding : holdings) {
-            sb.append(holding.toString()).append("\n");
+            if (holding instanceof CryptoCurrencyHolding) {
+                CryptoCurrencyHolding cch = (CryptoCurrencyHolding) holding;
+                sb.append(String.format(" * - %s: %.10f (USD %.2f)\n", 
+                    cch.getCryptoCurrency().getSymbol(), 
+                    cch.getAmount(), 
+                    cch.getValueInUSD()));
+            } else if (holding instanceof NFT) {
+                NFT nft = (NFT) holding;
+                sb.append(String.format(" * - %s: USD %.2f\n", 
+                    nft.getName(), 
+                    nft.getValueInUSD()));
+            }
         }
+        sb.append(" ***********************************\n");
+        sb.append(String.format(" * Balance: USD %.2f\n", getTotalValueInUSD()));
+        sb.append(" ***********************************");
         return sb.toString();
     }
-
-    public String getNiceName() {
-        return niceName;
+    /*public String getShortDescription() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("Your wallets:\n");
+    sb.append(String.format(" Combined Value: USD %.2f\n", getTotalValueInUSD()));
+    
+    for (CryptoWallet<CryptoCurrencyHolding> wallet : cryptoCurrencyWallets) {
+        sb.append(wallet.getShortDescription()).append("\n\n");
     }
-
-    public List<T> getHoldings() {
-        return holdings;
+    for (CryptoWallet<NFT> wallet : nftWallets) {
+        sb.append(wallet.getShortDescription()).append("\n\n");
     }
+    
+    return sb.toString();
+}*/
+
+public String getLongDescription() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(" ***********************************\n");
+    sb.append(String.format(" * Wallet name: %s\n", niceName));
+    sb.append(String.format(" * Wallet address: %s\n", address));
+    sb.append(String.format(" * Wallet private Key filename: %s\n", privateKeyFilename));
+    for (T holding : holdings) {
+        if (holding instanceof CryptoCurrencyHolding) {
+            CryptoCurrencyHolding cch = (CryptoCurrencyHolding) holding;
+            sb.append(String.format(" * - [%s]%s (%s), \n\tCurrent Price:%.2f: %.10f\n", 
+                cch.getCryptoCurrency().getBlockchainNetwork(),
+                cch.getCryptoCurrency().getName(),
+                cch.getCryptoCurrency().getSymbol(),
+                cch.getCryptoCurrency().getCurrentPrice(),
+                cch.getAmount()));
+        } else if (holding instanceof NFT) {
+            NFT nft = (NFT) holding;
+            sb.append(String.format(" * - [%s]%s, \n\tDescription:%s, \n\tContract Address:%s, \n\tPrice:%.1f\n", 
+                nft.getBlockchainNetwork(),
+                nft.getName(),
+                nft.getDescription(),
+                nft.getContractAddress(),
+                nft.getValueInUSD()));
+        }
+    }
+    sb.append(" ***********************************\n");
+    sb.append(String.format(" * Balance: USD %.2f\n", getTotalValueInUSD()));
+    sb.append(" ***********************************");
+    return sb.toString();
+}
+
+public String getNiceName() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getNiceName'");
+}
+
+public List<CryptoWallet<CryptoCurrencyHolding>> getHoldings() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getHoldings'");
+}
 }
