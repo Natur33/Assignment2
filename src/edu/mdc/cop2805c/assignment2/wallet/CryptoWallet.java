@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.mdc.cop2805c.assignment2.assets.CryptoCurrencyHolding;
 import edu.mdc.cop2805c.assignment2.assets.NFT;
+import edu.mdc.cop2805c.assignment2.base.CryptoCurrency;
 
 public class CryptoWallet<T> {
     private String niceName;
@@ -24,13 +25,13 @@ public class CryptoWallet<T> {
         holdings.add(asset);
     }
 
-    public void sell(T asset, String toAddress) {
-        holdings.remove(asset);
+    public void sell(CryptoCurrencyHolding sellHolding, String toAddress) {
+        holdings.remove(sellHolding);
     }
 
-    public void transferTo(CryptoWallet<CryptoCurrencyHolding> nftToTransfer, CryptoWallet<T> toWallet) {
-        if (holdings.remove(nftToTransfer)) {
-            toWallet.buy(nftToTransfer, this.address);
+    public void transferTo(CryptoCurrencyHolding transferHolding, CryptoWallet<T> toWallet) {
+        if (holdings.remove(transferHolding)) {
+            toWallet.buy(transferHolding, this.address);
         }
     }
 
@@ -122,5 +123,10 @@ public String getNiceName() {
 public List<CryptoWallet<CryptoCurrencyHolding>> getHoldings() {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getHoldings'");
+}
+
+public CryptoCurrency getCryptoCurrency() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getCryptoCurrency'");
 }
 }

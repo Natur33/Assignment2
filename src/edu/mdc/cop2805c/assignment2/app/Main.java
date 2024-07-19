@@ -233,11 +233,11 @@ public class Main {
         CryptoWallet<NFT> selectedWallet = walletManager.getNftWallets().get(walletIndex);
         System.out.println(">> Which NFT? ");
         for (int i = 0; i < selectedWallet.getHoldings().size(); i++) {
-            System.out.println(" " + (i + 1) + ". " + selectedWallet.getHoldings().get(i).getName());
+            System.out.println(" " + (i + 1) + ". " + selectedWallet.getHoldings().get(i).getNiceName());
         }
         int nftIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        NFT nftToSell = selectedWallet.getHoldings().get(nftIndex);
+        CryptoWallet<CryptoCurrencyHolding> nftToSell = selectedWallet.getHoldings().get(nftIndex);
         selectedWallet.sell(nftToSell, toAddress);
 
         System.out.println("NFT Sold!");
@@ -261,7 +261,7 @@ public class Main {
         System.out.println(">> Which amount? ");
         double amount = Double.parseDouble(scanner.nextLine());
 
-        CryptoCurrencyHolding holdingToSell = selectedWallet.getHoldings().get(currencyIndex);
+        CryptoWallet<CryptoCurrencyHolding> holdingToSell = selectedWallet.getHoldings().get(currencyIndex);
         CryptoCurrencyHolding sellHolding = new CryptoCurrencyHolding(holdingToSell.getCryptoCurrency(), amount);
         selectedWallet.sell(sellHolding, toAddress);
 
@@ -299,11 +299,11 @@ public class Main {
 
         System.out.println(">> Which NFT? ");
         for (int i = 0; i < fromWallet.getHoldings().size(); i++) {
-            System.out.println(" " + (i + 1) + ". " + fromWallet.getHoldings().get(i).getName());
+            System.out.println(" " + (i + 1) + ". " + fromWallet.getHoldings().get(i).getNiceName());
         }
         int nftIndex = Integer.parseInt(scanner.nextLine()) - 1;
 
-        NFT nftToTransfer = fromWallet.getHoldings().get(nftIndex);
+        CryptoWallet<CryptoCurrencyHolding> nftToTransfer = fromWallet.getHoldings().get(nftIndex);
         fromWallet.transferTo(nftToTransfer, toWallet);
 
         System.out.println("NFT Transferred!");
@@ -336,7 +336,7 @@ public class Main {
         System.out.println(">> Which amount? ");
         double amount = Double.parseDouble(scanner.nextLine());
 
-        CryptoCurrencyHolding holdingToTransfer = fromWallet.getHoldings().get(currencyIndex);
+        CryptoWallet<CryptoCurrencyHolding> holdingToTransfer = fromWallet.getHoldings().get(currencyIndex);
         CryptoCurrencyHolding transferHolding = new CryptoCurrencyHolding(holdingToTransfer.getCryptoCurrency(), amount);
         fromWallet.transferTo(transferHolding, toWallet);
 
@@ -376,270 +376,3 @@ public class Main {
         longTermNFTWallet.buy(new NFT("Laser Eyes Ape", "A cartoon ape with laser eyes", "0xBC4CA0EdA7BcC49921e03F869d7CbDEdC4A8A", "Ethereum", 120000), "sample_address");
     }
 }
-        
-/*import edu.mdc.cop2805c.assignment2.assets.CryptoCurrencyHolding;
-import edu.mdc.cop2805c.assignment2.assets.NFT;
-//import edu.mdc.cop2805c.assignment2.assets.CryptoCurrency;
-import edu.mdc.cop2805c.assignment2.wallet.CryptoWallet;
-import edu.mdc.cop2805c.assignment2.wallet.NFTWallet;
-//import edu.mdc.cop2805c.assignment2.wallet.WalletManager;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
-public class Main {
-
-    private static final Scanner scanner = new Scanner(System.in);
-
-    private static WalletManager walletManager = new WalletManager();
-
-    public static void main(String[] args) {
-        // Load wallets from file if available
-        loadWalletsFromFile();
-
-        // Display menu and process user input
-        displayMenu();
-    }
-
-    private static void loadWalletsFromFile() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("WalletManager.dat"))) {
-            walletManager = (WalletManager) ois.readObject();
-            System.out.println("Wallets loaded successfully from file.");
-        } catch (FileNotFoundException e) {
-            System.out.println("No saved wallets found.");
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Error loading wallets from file: " + e.getMessage());
-        }
-    }
-
-    private static void saveWalletsToFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("WalletManager.dat"))) {
-            oos.writeObject(walletManager);
-            System.out.println("Wallets saved successfully to file.");
-        } catch (IOException e) {
-            System.out.println("Error saving wallets to file: " + e.getMessage());
-        }
-    }
-
-    private static void displayMenu() {
-        String choice;
-        do {
-            System.out.println("***********************************************************");
-            System.out.println("** Please choose your option: ");
-            System.out.println("** 1. View all Wallets");
-            System.out.println("** 2. View Wallet");
-            System.out.println("** 3. Add Wallet");
-            System.out.println("** 4. Buy Crypto Assets");
-            System.out.println("** 5. Sell Crypto Assets");
-            System.out.println("** 6. Transfer Crypto Assets");
-            System.out.println("** Q. Quit");
-            System.out.println("***********************************************************");
-            System.out.print("Enter your choice: ");
-            choice = scanner.nextLine().trim().toLowerCase();
-
-            switch (choice) {
-                case "1":
-                    viewAllWallets();
-                    break;
-                case "2":
-                    viewWallet();
-                    break;
-                case "3":
-                    addWallet();
-                    break;
-                case "4":
-                    buyCryptoAssets();
-                    break;
-                case "5":
-                    sellCryptoAssets();
-                    break;
-                case "6":
-                    transferCryptoAssets();
-                    break;
-                case "q":
-                    System.out.println("Saving wallets to WalletManager.dat.");
-                    saveWalletsToFile();
-                    System.out.println("Exiting program. Goodbye!");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please enter a valid option.");
-                    break;
-            }
-        } while (!choice.equals("q"));
-    }
-
-    private static void viewAllWallets() {
-        System.out.println("Your wallets:");
-        walletManager.displayWallets();
-    }
-
-    private static void viewWallet() {
-        System.out.println("Which Wallet?");
-        int index = selectWallet();
-        if (index != -1) {
-            System.out.println(walletManager.getWallet(index).getLongDescription());
-        }
-    }
-
-    private static void addWallet() {
-        System.out.println("What type of Asset?");
-        System.out.println(" (1) NFT  (2) Crypto Currency ");
-        String assetTypeChoice = scanner.nextLine().trim();
-
-        if (assetTypeChoice.equals("1")) {
-            addNFTWallet();
-        } else if (assetTypeChoice.equals("2")) {
-            addCryptoCurrencyWallet();
-        } else {
-            System.out.println("Invalid choice. Returning to main menu.");
-        }
-    }
-
-    private static void addNFTWallet() {
-        System.out.println("Nice name for the wallet:");
-        String niceName = scanner.nextLine().trim();
-
-        System.out.println("Address (Public Key):");
-        String address = scanner.nextLine().trim();
-
-        System.out.println("Private Key Filename:");
-        String privateKeyFilename = scanner.nextLine().trim();
-
-        List<NFT> holdings = new ArrayList<>();
-        NFTWallet wallet = new NFTWallet(niceName, address, privateKeyFilename, holdings);
-        walletManager.addWallet(wallet);
-
-        System.out.println("NFT Wallet added successfully!");
-    }
-
-    private static void addCryptoCurrencyWallet() {
-        System.out.println("Nice name for the wallet:");
-        String niceName = scanner.nextLine().trim();
-
-        System.out.println("Address (Public Key):");
-        String address = scanner.nextLine().trim();
-
-        System.out.println("Private Key Filename:");
-        String privateKeyFilename = scanner.nextLine().trim();
-
-        List<CryptoCurrencyHolding> holdings = new ArrayList<>();
-        CryptoWallet<CryptoCurrencyHolding> wallet = new CryptoWallet<>(niceName, address, privateKeyFilename, holdings);
-        walletManager.addWallet(wallet);
-
-        System.out.println("Crypto Currency Wallet added successfully!");
-    }
-
-    private static void buyCryptoAssets() {
-        System.out.println("From which address?");
-        String fromAddress = scanner.nextLine().trim();
-
-        System.out.println("What type of Asset?");
-        System.out.println(" (1) NFT  (2) Crypto Currency ");
-        String assetTypeChoice = scanner.nextLine().trim();
-
-        if (assetTypeChoice.equals("1")) {
-            buyNFT(fromAddress);
-        } else if (assetTypeChoice.equals("2")) {
-            buyCryptoCurrency(fromAddress);
-        } else {
-            System.out.println("Invalid choice. Returning to main menu.");
-        }
-    }
-
-    private static void buyNFT(String fromAddress) {
-        int index = selectWallet("Which Wallet?", NFTWallet.class);
-        if (index != -1) {
-            NFTWallet wallet = walletManager.getWallet(index);
-            System.out.println("Name of the NFT?");
-            String name = scanner.nextLine().trim();
-
-            System.out.println("Description of the NFT?");
-            String description = scanner.nextLine().trim();
-
-            System.out.println("Contract Address of the NFT?");
-            String contractAddress = scanner.nextLine().trim();
-
-            System.out.println("Blockchain network of the NFT?");
-            String blockchainNetwork = scanner.nextLine().trim();
-
-            System.out.println("Value in USD of the NFT?");
-            double valueInUSD = Double.parseDouble(scanner.nextLine().trim());
-
-            NFT nft = new NFT(name, description, contractAddress, blockchainNetwork, valueInUSD);
-            wallet.getHoldings().add(nft);
-            System.out.println("NFT Bought!");
-            System.out.printf("Balance for %s: $%.2f\n", wallet.getNiceName(), wallet.getTotalValueInUSD());
-        }
-    }
-
-    private static void buyCryptoCurrency(String fromAddress) {
-        int index = selectWallet("Which Wallet?", CryptoWallet.class);
-        if (index != -1) {
-            CryptoWallet<CryptoCurrencyHolding> wallet = walletManager.getCryptoWallet(index);
-            System.out.println("Which crypto currency?");
-            int cryptoIndex = selectCryptoCurrency(wallet);
-            if (cryptoIndex != -1) {
-                CryptoCurrency currency = wallet.getHoldings().get(cryptoIndex).getCryptoCurrency();
-
-                System.out.println("Which amount?");
-                double amount = Double.parseDouble(scanner.nextLine().trim());
-
-                // Implement logic to buy crypto currency here (not fully implemented in this example)
-                // For demonstration purpose, just print a message
-                System.out.printf("Crypto Currency Bought! Balance for %s: $%.4f\n", wallet.getNiceName(), wallet.getTotalValueInUSD());
-            }
-        }
-    }
-
-    private static void sellCryptoAssets() {
-        // Implement logic to sell crypto assets
-        System.out.println("Functionality to sell crypto assets is not implemented yet.");
-    }
-
-    private static void transferCryptoAssets() {
-        // Implement logic to transfer crypto assets
-        System.out.println("Functionality to transfer crypto assets is not implemented yet.");
-    }
-
-    private static int selectWallet() {
-        walletManager.displayWallets();
-        System.out.print("Enter wallet number: ");
-        int index = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (index < 0 || index >= walletManager.getNumWallets()) {
-            System.out.println("Invalid wallet number. Please try again.");
-            return -1;
-        }
-        return index;
-    }
-
-    private static <T extends WalletStorable> int selectWallet(String message, Class<T> walletType) {
-        System.out.println(message);
-        List<T> wallets = walletManager.getWalletsOfType(walletType);
-        for (int i = 0; i < wallets.size(); i++) {
-            System.out.printf(" %d. %s\n", i + 1, wallets.get(i).getShortDescription());
-        }
-        System.out.print("Enter wallet number: ");
-        int index = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (index < 0 || index >= wallets.size()) {
-            System.out.println("Invalid wallet number. Please try again.");
-            return -1;
-        }
-        return walletManager.indexOf(wallets.get(index));
-    }
-
-    private static int selectCryptoCurrency(CryptoWallet<CryptoCurrencyHolding> wallet) {
-        List<CryptoCurrencyHolding> holdings = wallet.getHoldings();
-        for (int i = 0; i < holdings.size(); i++) {
-            System.out.printf(" %d. %s\n", i + 1, holdings.get(i).getCryptoCurrency().toString());
-        }
-        System.out.print("Enter crypto currency number: ");
-        int index = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (index < 0 || index >= holdings.size()) {
-            System.out.println("Invalid crypto currency number. Please try again.");
-            return -1;
-        }
-        return index;
-    }
-}*/
